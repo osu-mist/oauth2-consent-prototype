@@ -1,6 +1,7 @@
 # encoding: utf-8
 from __future__ import print_function
 import json
+import os
 import urllib
 import urlparse
 import requests
@@ -11,19 +12,26 @@ from flask_seasurf import SeaSurf
 
 app = flask.Flask('consent')
 
+# Configuration defaults
+app.config['SECRET_KEY'] = None
+app.config['OAUTH_URL'] = 'https://osu-test.apigee.net/oauth2'
+app.config['CAS_URL'] = 'https://login.oregonstate.edu/cas-dev'
+
+# make cookies more secure
+# cookies with the secure flag are only sent over HTTPS
+# cookies with the HttpOnly flag are not accessible with JavaScript
 app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['CSRF_COOKIE_SECURE'] = True
 app.config['CSRF_COOKIE_HTTPONLY'] = True
 
-app.config['SECRET_KEY'] = 'lol'
+# Load user config
+if 'CONSENT_CONFIG' in os.environ:
+    app.config.from_envvar('CONSENT_CONFIG')
 
 csrf = SeaSurf(app)
 request = flask.request
 session = flask.session
-
-OAUTH_URL = 'https://osu-test.apigee.net/oauth2'
-CAS_URL = 'https://login.oregonstate.edu/cas-dev'
 
 @app.after_request
 def set_x_frame_options(response):
@@ -34,8 +42,6 @@ def set_x_frame_options(response):
 
 @app.route('/authorize')
 def index():
-    #print(request.args)
-
     if not request.args.get('redirect_uri', ''):
         return 'no redirect uri provided', 400
 
@@ -46,13 +52,15 @@ def index():
         ('state', request.args.get('state', '')),
     ])
 
-    service_url = append_query(OAUTH_URL+"/authorize", query_params)
-    consent_url = append_query(OAUTH_URL+"/consent", query_params)
+    oauth_url = app.config['OAUTH_URL']
+    cas_url = app.config['CAS_URL']
+    service_url = append_query(oauth_url+"/authorize", query_params)
+    consent_url = append_query(oauth_url+"/consent", query_params)
 
     if u'ticket' in request.args:
         # got cas; validate ticket
         try:
-            user = validate_cas(request.args[u'ticket'], service_url)
+            user = validate_cas(cas_url, request.args[u'ticket'], service_url)
         except CASError as e:
             return u'login failed (%s)' % str(e), 403
         except Exception as e:
@@ -61,11 +69,11 @@ def index():
         # save user
         session['user'] = user
 
-        # XXX redirect after successful login?
+        # TODO: redirect after successful login?
 
     elif u'user' not in session:
         # redirect to cas
-        return flask.redirect(CAS_URL+"/login?service="+urllib.quote(service_url))
+        return flask.redirect(cas_url+"/login?service="+urllib.quote(service_url))
 
     # show consent page
     return flask.render_template('consent.html.j2', consent_url=consent_url)
@@ -117,8 +125,8 @@ class CASError(Exception):
             return str(self.msg)
         return str(self.code)
 
-def validate_cas(ticket, service):
-    r = requests.get(CAS_URL+'/serviceValidate', params={'ticket': ticket, 'service': service})
+def validate_cas(cas_url, ticket, service):
+    r = requests.get(cas_url+'/serviceValidate', params={'ticket': ticket, 'service': service})
     if r.status_code != 200:
         raise CASError('invalid response')
 
@@ -135,8 +143,6 @@ def validate_cas(ticket, service):
 
     authenticationFailure = root.find(ns+'authenticationFailure')
     authenticationSuccess = root.find(ns+'authenticationSuccess')
-    #print(authenticationFailure)
-    #print(authenticationSuccess)
 
     if authenticationFailure is not None:
         raise CASError(authenticationFailure.text.strip(), authenticationFailure.get('code'))
