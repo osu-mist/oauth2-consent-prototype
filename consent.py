@@ -6,6 +6,7 @@ import urllib
 import urlparse
 import requests
 import xml.etree.ElementTree as elementtree
+from datetime import datetime
 
 import flask
 from flask_seasurf import SeaSurf
@@ -76,7 +77,8 @@ def index():
         return flask.redirect(cas_url+"/login?service="+urllib.quote(service_url))
 
     # show consent page
-    return flask.render_template('consent.html.j2', consent_url=consent_url)
+    year = datetime.today().year
+    return flask.render_template('consent.html.j2', consent_url=consent_url, year=year)
 
 
 @app.route('/consent', methods=['POST'])
