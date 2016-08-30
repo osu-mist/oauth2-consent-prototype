@@ -24,6 +24,11 @@
   font-style: normal;
 }
 
+html {
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
 body {
   font-family: "Gudea", sans-serif;
   font-size: 16px;
@@ -127,7 +132,27 @@ footer {
   color: #fff;
   padding: 50px;
   border-top: 5px solid #c34500;
-  min-height:200px;
+  min-height:270px;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+footer h2 {
+  color: inherit;
+  font-size: 120%;
+  margin-top: 0;
+  line-height: inherit;
+}
+
+footer a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+footer a:hover, footer a:active, footer a:focus {
+  background-color: #666;
+  text-decoration: none;
+  border-radius: 3px;
 }
 
 @media (min-width:768px) {
