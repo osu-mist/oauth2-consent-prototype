@@ -16,6 +16,10 @@ Installation
     % virtualenv .
     % bin/pip install -e .
 
+### Dependencies
+
+See [setup.py](setup.py#L11).
+
 Testing
 ----
 
