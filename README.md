@@ -16,6 +16,17 @@ Installation
     % virtualenv .
     % bin/pip install -e .
 
+Testing
+----
+
+Install pytest, if you haven't yet.
+
+    % bin/pip install pytest
+
+Run the tests.
+
+    % bin/pytest tests
+
 Configuration
 ----
 
