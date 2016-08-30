@@ -10,6 +10,7 @@ from datetime import datetime
 
 import flask
 from flask_seasurf import SeaSurf
+from werkzeug.exceptions import BadRequest
 
 app = flask.Flask('consent')
 
@@ -43,8 +44,7 @@ def set_x_frame_options(response):
 
 @app.route('/authorize')
 def index():
-    if not request.args.get('redirect_uri', ''):
-        return 'no redirect uri provided', 400
+    redirect_uri = validate_redirect_uri(request.args.get('redirect_uri', ''))
 
     query_params = urllib.urlencode([
         ('client_id', request.args['client_id']),
@@ -83,10 +83,7 @@ def index():
 
 @app.route('/consent', methods=['POST'])
 def consent():
-    if not request.args.get('redirect_uri', ''):
-        return 'no redirect uri provided', 400
-
-    redirect_uri = request.args['redirect_uri']
+    redirect_uri = validate_redirect_uri(request.args.get('redirect_uri', ''))
 
     if u'user' not in session:
         return u'not logged in', 403
@@ -115,6 +112,34 @@ def consent():
         # user didn't consent
         state = request.args.get('state', '')
         return redirect_error(redirect_uri, state, 'access_denied')
+
+def validate_redirect_uri(redirect_uri):
+    """Returns its argument or raises werkzeug.exceptions.BadRequest"""
+
+    # RFC 6749, §3.1.2.4
+    # If an authorization request fails validation due to a missing,
+    # invalid, or mismatching redirection URI, the authorization server
+    # SHOULD inform the resource owner of the error and MUST NOT
+    # automatically redirect the user-agent to the invalid redirection URI.
+
+    if not redirect_uri:
+        raise BadRequest('no redirect uri provided')
+
+    if not redirect_uri.startswith('https://'):
+        # §3.1.2 "The redirection endpoint URI MUST be an absolute URI..."
+        # §3.1.2.1 "The redirection endpoint SHOULD require the use of TLS..."
+        raise BadRequest('invalid redirect uri: scheme must be https')
+
+    url = urlparse.urlsplit(redirect_uri)
+    if not url.netloc or not url.hostname:
+        # §3.1.2 "The redirection endpoint URI MUST be an absolute URI..."
+        raise BadRequest('invalid redirect uri: no host')
+
+    if url.fragment:
+        # §3.1.2 "The endpoint URI MUST NOT include a fragment component."
+        raise BadRequest('invalid redirect uri: fragment not allowed')
+
+    return redirect_uri
 
 class CASError(Exception):
     def __init__(self, msg, code=''):
