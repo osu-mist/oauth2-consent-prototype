@@ -57,3 +57,13 @@ Running
 
 This runs the consent app in debug mode.
 For deploying in production, use gunicorn or another WSGI server.
+
+TODO
+----
+
+- We should validate the list of scopes that the application is requesting
+  and display pretty explanations to the user. (Apigee does filter out invalid
+  scopes, but - the way things are set up right now - not until the user has
+  already submitted the consent form.)
+
+- Maybe redirect after the user logs in with CAS to get the ticket out of the url?
