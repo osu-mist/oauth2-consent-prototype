@@ -5,3 +5,5 @@
 /local/
 # configuration
 /config.py
+# package info
+*.egg-info
