@@ -4,9 +4,7 @@ OAuth2 Consent App
 This app serves the prototype authorization page
 for Oregon State University's developer APIs
 during the 3-legged OAuth2 flow.
-It is meant to be used with the corresponding [apigee proxy][].
-
-[apigee proxy]:
+It is meant to be used with the corresponding apigee proxy.
 
 Installation
 ----
