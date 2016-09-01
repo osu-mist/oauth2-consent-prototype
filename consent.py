@@ -16,8 +16,8 @@ app = flask.Flask('consent')
 
 # Configuration defaults
 app.config['SECRET_KEY'] = None
-app.config['OAUTH_URL'] = 'https://osu-test.apigee.net/oauth2'
-app.config['CAS_URL'] = 'https://login.oregonstate.edu/cas-dev'
+app.config['OAUTH_URL'] = 'https://api.oregonstate.edu/oauth2'
+app.config['CAS_URL'] = 'https://login.oregonstate.edu/cas'
 
 # make cookies more secure
 # cookies with the secure flag are only sent over HTTPS
