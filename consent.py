@@ -62,6 +62,7 @@ def index():
     cas_url = app.config['CAS_URL']
     service_url = append_query(oauth_url+"/authorize", query_params)
     consent_url = append_query(oauth_url+"/consent", query_params)
+    logout_url = oauth_url+"/logout"
 
     if u'ticket' in request.args:
         # got cas; validate ticket
@@ -83,7 +84,8 @@ def index():
 
     # show consent page
     year = datetime.today().year
-    return flask.render_template('consent.html.j2', consent_url=consent_url, year=year)
+    return flask.render_template('consent.html.j2',
+        consent_url=consent_url, logout_url=logout_url, year=year)
 
 
 @app.route('/consent', methods=['POST'])
@@ -117,6 +119,12 @@ def consent():
         # user didn't consent
         state = request.args.get('state', '')
         return redirect_error(redirect_uri, state, 'access_denied')
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    if 'user' in session:
+        del session['user']
+    return flask.redirect(app.config['CAS_URL'] + "/logout")
 
 def validate_redirect_uri(redirect_uri):
     """Returns its argument or raises werkzeug.exceptions.BadRequest"""
