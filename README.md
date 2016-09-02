@@ -42,11 +42,12 @@ Configuration
     OAUTH_URL
 
         The base URL of OAuth2 proxy where this app is served.
+        Example: https://api.oregonstate.edu/v1/oauth2
 
     CAS_URL
 
-        The base URL to OSU's CAS login page.
-        You probably want to stick with the default unless you're testing.
+        The base URL to a CAS login page.
+        Example: https://login.oregonstate.edu/cas
 
 Running
 ----
@@ -65,3 +66,6 @@ TODO
   already submitted the consent form.)
 
 - Maybe redirect after the user logs in with CAS to get the ticket out of the url?
+
+- Use the built-in `SERVER_NAME` and `APPLICATION_ROOT`
+  config vars instead of `OAUTH_URL`.

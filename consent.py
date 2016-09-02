@@ -16,8 +16,8 @@ app = flask.Flask('consent')
 
 # Configuration defaults
 app.config['SECRET_KEY'] = None
-app.config['OAUTH_URL'] = 'https://api.oregonstate.edu/oauth2'
-app.config['CAS_URL'] = 'https://login.oregonstate.edu/cas'
+app.config['OAUTH_URL'] = None
+app.config['CAS_URL'] = None
 
 # make cookies more secure
 # cookies with the secure flag are only sent over HTTPS
@@ -34,6 +34,11 @@ if 'CONSENT_CONFIG' in os.environ:
 csrf = SeaSurf(app)
 request = flask.request
 session = flask.session
+
+@app.before_request
+def check_config_vars():
+    if not app.config.get('SECRET_KEY') or not app.config.get('OAUTH_URL') or not app.config.get('CAS_URL'):
+        raise RuntimeError('The consent app is not configured properly. Please set SECRET_KEY, OAUTH_URL, and CAS_URL.')
 
 @app.after_request
 def set_x_frame_options(response):
