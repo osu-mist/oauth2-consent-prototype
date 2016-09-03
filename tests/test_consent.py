@@ -22,6 +22,8 @@ def test_validate_redirect_uri():
     validate_redirect_uri('https://oregonstate.edu/path')
     validate_redirect_uri('https://oregonstate.edu?foo=bar')
     validate_redirect_uri('https://oregonstate.edu?error=error')
+    validate_redirect_uri('http://127.0.0.1/')
+    validate_redirect_uri('http://127.0.0.1:5000/')
 
 def test_invalid_redirect_uri():
     from consent import validate_redirect_uri
@@ -43,3 +45,10 @@ def test_invalid_redirect_uri():
 
     with pytest.raises(BadRequest):
         validate_redirect_uri('') # empty string
+
+    with pytest.raises(BadRequest):
+        validate_redirect_uri('http://localhost')
+
+    with pytest.raises(BadRequest):
+        # don't confuse userinfo with a host name
+        validate_redirect_uri('http://127.0.0.1:x@evil.com')

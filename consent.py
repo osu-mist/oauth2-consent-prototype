@@ -138,12 +138,17 @@ def validate_redirect_uri(redirect_uri):
     if not redirect_uri:
         raise BadRequest('no redirect uri provided')
 
-    if not redirect_uri.startswith('https://'):
-        # §3.1.2 "The redirection endpoint URI MUST be an absolute URI..."
+    try:
+        url = urlparse.urlsplit(redirect_uri)
+    except ValueError as e:
+        raise BadRequest('invalid redirect uri: '+str(e))
+
+    if url.scheme != 'https' \
+            and not (url.scheme == 'http' and url.hostname == '127.0.0.1'):
         # §3.1.2.1 "The redirection endpoint SHOULD require the use of TLS..."
+        # (but we allow http on localhost for testing purposes)
         raise BadRequest('invalid redirect uri: scheme must be https')
 
-    url = urlparse.urlsplit(redirect_uri)
     if not url.netloc or not url.hostname:
         # §3.1.2 "The redirection endpoint URI MUST be an absolute URI..."
         raise BadRequest('invalid redirect uri: no host')
