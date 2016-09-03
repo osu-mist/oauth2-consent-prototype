@@ -206,4 +206,7 @@ def append_query(url, query):
     return urlparse.urlunsplit([url.scheme, url.netloc, url.path, query, url.fragment])
 
 if __name__ == '__main__':
+    # https://github.com/pallets/flask/issues/1907
+    app.jinja_env.auto_reload = True
+
     app.run(port=5000, debug=True)
