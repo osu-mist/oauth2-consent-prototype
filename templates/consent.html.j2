@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en_US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>App permissions - Oregon State University</title>
+    <link rel="Shortcut Icon" href="https://developer.oregonstate.edu/sites/all/themes/doug-fir/favicon.ico" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- OSU Style-->
+    <style>
+      {% include 'osu.css' %}
+    </style>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <header>
+      <a href="http://oregonstate.edu"><img id="logo" src="http://oregonstate.edu/images/logo.jpg?v=1" alt="Oregon State University" width="215" height="78"/></a>
+      <a id="site-title"><h1>App permissions</h1></a>
+      <button id="menu" class="dropdown-toggle" type="button" data-toggle="dropdown">
+        <i class="fa fa-bars"></i>
+        <br>
+        MENU
+      </button>
+      <ul class="dropdown-menu menu" role="menu">
+        <li>
+          <form id="logout" action="{{ logout_url }}" method="POST">
+            <input type=hidden name=_csrf_token value="{{ csrf_token() }}">
+            <input type=submit value="Log out" class="btn btn-default btn-link">
+          </form>
+        </li>
+      </ul>
+    </header>
+
+    <section class="content">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <p>
+              <big>
+                The app '{{ request.args.appname }}'
+                is asking for access to your oregonstate.edu account.
+              </big>
+            </p>
+
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                User
+              </div>
+              <div class="panel-body">
+                {{ session.user }}@oregonstate.edu
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                App Info
+              </div>
+              <div class="panel-body">
+                Developer email: {{ request.args.devname }}<br>
+                Redirect URL: {{ request.args.redirect_uri }}
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                Permissions:
+              </div>
+              {# TODO: filter out invalid scopes #}
+              {# TODO: show scope descriptions #}
+              <ul class="list-group">
+                {% for scope in (request.args.scope|default).split() %}
+                  <li class="list-group-item">{{ scope }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-3">
+            <form method="POST" action="{{consent_url}}" class="form-group">
+              <input type=hidden name=_csrf_token value="{{ csrf_token() }}">
+              <input type=hidden name=consent value=yes>
+              <input type=submit class="btn btn-primary btn-lg btn-block" value="Allow">
+            </form>
+          </div>
+
+          <div class="col-sm-3">
+            <form method="POST" action="{{consent_url}}" class="form-group">
+              <input type=hidden name=_csrf_token value="{{ csrf_token() }}">
+              <input type=hidden name=consent value=no>
+              <input type=submit class="btn btn-default btn-lg btn-block" value="Don't allow">
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="col-sm-5">
+            <h2>Contact Information</h2>
+            <div class="general-contact">
+              <a href="http://oregonstate.edu/copyright">Copyright</a> &copy; {{ year }} Oregon State University<br>
+              <a href="http://oregonstate.edu/disclaimer">Disclaimer</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Gudea font -->
+    <link href='https://fonts.googleapis.com/css?family=Gudea:400,400italic,700' rel='stylesheet' type='text/css'>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+
+    {#<script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-48705802-2', 'auto');
+      ga('send', 'pageview');
+    </script>#}
+
+  </body>
+</html>

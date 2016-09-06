@@ -1,0 +1,9 @@
+# virtualenv dirs
+/bin/
+/include/
+/lib/
+/local/
+# configuration
+/config.py
+# package info
+*.egg-info
