@@ -66,7 +66,7 @@ Build a docker image with
 
 Run the image with
 
-    # docker run --port 5000:8000 --volume $PWD/config.py:/src/config.py:ro consent
+    # docker run --publish 5000:8000 --volume $PWD/config.py:/src/config.py:ro consent
 
 where 5000 is the port you want to listen on
 and $PWD/config.py is the (absolute) path to your config file.
