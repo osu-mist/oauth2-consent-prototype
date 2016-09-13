@@ -84,7 +84,7 @@ def index():
 
     # show consent page
     year = datetime.today().year
-    return flask.render_template('consent.html.j2',
+    return flask.render_template('consent.html',
         consent_url=consent_url, logout_url=logout_url, year=year)
 
 
