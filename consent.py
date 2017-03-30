@@ -60,7 +60,7 @@ def index():
 
     oauth_url = app.config['OAUTH_URL']
     cas_url = app.config['CAS_URL']
-    service_url = append_query(oauth_url+"/authorize", query_params)
+    service_url = append_query(oauth_url+"/userAuthorize", query_params)
     consent_url = append_query(oauth_url+"/consent", query_params)
     logout_url = oauth_url+"/logout"
 
