@@ -2,4 +2,5 @@
 !requirements.txt
 !*.py
 !templates/*.j2
+!templates/*.html
 !templates/*.css
