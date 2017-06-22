@@ -27,19 +27,6 @@
     <header>
       <a href="http://oregonstate.edu"><img id="logo" src="https://oregonstate.edu/images/logo.jpg?v=1" alt="Oregon State University" width="215" height="78"/></a>
       <a id="site-title"><h1>App permissions</h1></a>
-      <button id="menu" class="dropdown-toggle" type="button" data-toggle="dropdown">
-        <i class="fa fa-bars"></i>
-        <br>
-        MENU
-      </button>
-      <ul class="dropdown-menu menu" role="menu">
-        <li>
-          <form id="logout" action="{{ logout_url }}" method="POST">
-            <input type=hidden name=_csrf_token value="{{ csrf_token() }}">
-            <input type=submit value="Log out" class="btn btn-default btn-link">
-          </form>
-        </li>
-      </ul>
     </header>
 
     <section class="content">
@@ -48,19 +35,16 @@
           <div class="col-sm-6">
             <p>
               <big>
-                The app '{{ request.args.appname }}'
+                The app <strong>{{ request.args.appname }}</strong>
                 is asking for access to your oregonstate.edu account.
               </big>
+
+              <form id="logout" action="{{ logout_url }}" method="POST">
+                <input type=hidden name=_csrf_token value="{{ csrf_token() }}">
+                <input type=submit value="Not {{ session.user }}@oregonstate.edu?" class="btn btn-default btn-link">
+              </form>
             </p>
 
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                User
-              </div>
-              <div class="panel-body">
-                {{ session.user }}@oregonstate.edu
-              </div>
-            </div>
 
             <div class="panel panel-default">
               <div class="panel-heading">
