@@ -61,7 +61,7 @@ paths:
                 developer.email:
                   description: the email of the developer account that requested this token
                   type: string
-                  pattern: .*@.*
+                  format: email
                   example: example@example.com
                 token_type:
                   description: the type of this token
@@ -74,7 +74,7 @@ paths:
                   description: the client ID of the token requester
                   type: string
                 access_token:
-                  description: the token issued by the server
+                  description: the token issued by the server. Use this to authenticate for other API endpoints.
                   type: string
                 application_name:
                   description: the name of the application that requested this token
@@ -118,26 +118,9 @@ definitions:
             $ref: '#/definitions/ErrorObject'
   ErrorObject:
     properties:
-      status:
+      ErrorCode:
         type: string
-        description: HTTP status code
-        example: '123'
-      title:
+        example: invalid_request
+      Error:
         type: string
-        description: A short, user readable summary of the error
-        example: Not Found
-      code:
-        type: string
-        description: An application-specific error code
-        example: '1234'
-      detail:
-        type: string
-        description: A long description of the error that may contain instance-specific details
-        example: A long description of the error that may contain instance-specific details
-      links:
-        properties:
-          about:
-            type: string
-            format: uri
-            description: A link to further information about the error
-            example: https://developer.oregonstate.edu/documentation/error-reference#1234
+        example: "Required param: grant_type"
