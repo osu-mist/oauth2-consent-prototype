@@ -37,13 +37,13 @@ paths:
           enum: [client_credentials]
           in: formData
       responses:
-        200:
+        '200':
           description: authenticated successfully
           schema:
             properties:
                 refresh_token_expires_in:
-                  type: integer
-                  example: 0
+                  type: string
+                  example: "0"
                 api_product_list:
                   type: string
                   example: "[Locations]"
@@ -69,7 +69,7 @@ paths:
                   enum: [BearerToken]
                 issued_at:
                   description: the unix timestamp when this token was issued
-                  type: integer
+                  type: string
                 client_id:
                   description: the client ID of the token requester
                   type: string
@@ -84,9 +84,60 @@ paths:
                   example: ""
                 expires_in:
                   description: the number of seconds until this token expires
-                  type: integer
+                  type: string
                 refresh_count:
-                  type: integer
+                  type: string
                 status:
                   type: string
                   enum: [approved]
+        '400':
+          $ref: "#/responses/400"
+        '401':
+          $ref: "#/responses/401"
+        '500':
+          $ref: "#/responses/500"
+responses:
+  '400':
+    description: Incorrect syntax in request, or required fields missing
+    schema:
+      $ref: '#/definitions/ErrorResult'
+  '401':
+    description: User not authorized to perform this action
+    schema:
+      $ref: '#/definitions/ErrorResult'
+  '500':
+    description: Internal server error
+    schema:
+      $ref: '#/definitions/ErrorResult'
+definitions:
+  ErrorResult:
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/definitions/ErrorObject'
+  ErrorObject:
+    properties:
+      status:
+        type: string
+        description: HTTP status code
+        example: '123'
+      title:
+        type: string
+        description: A short, user readable summary of the error
+        example: Not Found
+      code:
+        type: string
+        description: An application-specific error code
+        example: '1234'
+      detail:
+        type: string
+        description: A long description of the error that may contain instance-specific details
+        example: A long description of the error that may contain instance-specific details
+      links:
+        properties:
+          about:
+            type: string
+            format: uri
+            description: A link to further information about the error
+            example: https://developer.oregonstate.edu/documentation/error-reference#1234
