@@ -1,0 +1,92 @@
+swagger: '2.0'
+info:
+  description: Endpoint for perfoming OAuth2 operations
+  title: OAuth2
+  version: v1
+  contact:
+    name: IS Data Architecture Team
+    url: https://is.oregonstate.edu/data-architecture
+    email: isdataarchitecture@oregonstate.edu
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+schemes:
+  - https
+host: api.oregonstate.edu
+produces:
+  - application/json
+consumes:
+  - application/x-www-form-urlencoded
+paths:
+  /oauth2/token:
+    post:
+      description: Get an access token to make API calls. Part of OAuth2 client credentials flow.
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: client_id
+          type: string
+          in: formData
+          description: OAuth Client ID for the application (also called "Consumer Key" in the developer portal)
+        - name: client_secret
+          type: string
+          in: formData
+          description: OAuth Client Secret for the application (also called "Consumer Secret" in the developer portal)
+        - name: grant_type
+          type: string
+          enum: [client_credentials]
+          in: formData
+      responses:
+        200:
+          description: authenticated successfully
+          schema:
+            properties:
+                refresh_token_expires_in:
+                  type: integer
+                  example: 0
+                api_product_list:
+                  type: string
+                  example: "[Locations]"
+                  description: a stringified JSON list of APIs this token has access to
+                api_product_list_json:
+                  type: array
+                  description: a list of APIs this token has access to
+                  items:
+                    type: string
+                    example: Locations
+                organization_name:
+                  description: the name of the Apigee organization this token was issued by
+                  type: string
+                  enum: [oregonstateuniversity]
+                developer.email:
+                  description: the email of the developer account that requested this token
+                  type: string
+                  pattern: .*@.*
+                  example: example@example.com
+                token_type:
+                  description: the type of this token
+                  type: string
+                  enum: [BearerToken]
+                issued_at:
+                  description: the unix timestamp when this token was issued
+                  type: integer
+                client_id:
+                  description: the client ID of the token requester
+                  type: string
+                access_token:
+                  description: the token issued by the server
+                  type: string
+                application_name:
+                  description: the name of the application that requested this token
+                  type: string
+                scope:
+                  type: string
+                  example: ""
+                expires_in:
+                  description: the number of seconds until this token expires
+                  type: integer
+                refresh_count:
+                  type: integer
+                status:
+                  type: string
+                  enum: [approved]
