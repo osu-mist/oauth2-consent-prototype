@@ -34,7 +34,7 @@ paths:
           description: OAuth Client Secret for the application (also called "Consumer Secret" in the developer portal)
         - name: grant_type
           type: string
-          enum: [client_credentials]
+          enum: [client_credentials, refresh_token]
           in: formData
       responses:
         '200':
@@ -89,7 +89,7 @@ paths:
                   type: string
                 status:
                   type: string
-                  enum: [approved]
+                  enum: [approved, revoked]
         '400':
           $ref: "#/responses/400"
         '401':
