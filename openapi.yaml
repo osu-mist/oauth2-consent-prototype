@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  description: Endpoint for perfoming OAuth2 operations
+  description: Request an OAuth2 token.
   title: OAuth2
   version: v1
   contact:
